@@ -1,0 +1,5 @@
+services:
+  mc-evolution:
+    environment:
+      INIT_MEMORY: "1G"
+      MAX_MEMORY: "2G"

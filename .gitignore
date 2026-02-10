@@ -1,0 +1,10 @@
+data/*
+!data/datapacks/
+data/datapacks/*
+!data/datapacks/CCC_2.0.zip
+!data/datapacks/extra/
+data/datapacks/extra/*
+!data/datapacks/extra/CobblemonRaidDenDesigns-0.3_RELEASE.zip
+
+backups/*
+!backups/.gitkeep

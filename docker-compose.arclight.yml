@@ -1,0 +1,11 @@
+services:
+  mc-evolution:
+    environment:
+      TYPE: "ARCLIGHT"
+      ARCLIGHT_TYPE: "FABRIC"
+      MODPACK_PLATFORM: "MODRINTH"
+
+      USES_PLUGINS: "true"
+      MODRINTH_PROJECTS: |
+        paper:luckperms
+        paper:chunky

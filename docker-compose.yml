@@ -1,0 +1,97 @@
+services:
+  mc-evolution:
+    image: itzg/minecraft-server:java21
+    container_name: mc-evolution-16gb
+    restart: unless-stopped
+    stop_grace_period: 1m30s
+
+    ports:
+      - "25565:25565"
+      - "10101:10101"
+
+    environment:
+      EULA: "TRUE"
+      TYPE: "MODRINTH"
+      VERSION: "1.21.1"
+      MODRINTH_MODPACK: "cobbleverse"
+      MODRINTH_LOADER: "fabric"
+      MODRINTH_MODPACK_VERSION_TYPE: "release"
+
+      INIT_MEMORY: "6G"
+      MAX_MEMORY: "12G"
+      TZ: "America/Mexico_City"
+
+      USE_MEOWICE_FLAGS: "true"
+
+      VIEW_DISTANCE: "8"
+      SIMULATION_DISTANCE: "6"
+      SYNC_CHUNK_WRITES: "false"
+      NETWORK_COMPRESSION_THRESHOLD: "256"
+      ENABLE_COMMAND_BLOCK: "false"
+
+      MODRINTH_PROJECTS_DEFAULT_VERSION_TYPE: "release"
+
+      MODRINTH_PROJECTS: |
+        fabric:luckperms
+        fabric:chunky
+        fabric:collective
+        fabric:oritech
+        fabric:refined-storage
+        fabric:refined-storage-rei-integration
+        fabric:bloos-gacha-machine
+        fabric:cobblemonraiddens
+        fabric:cobbledgacha
+        fabric:fallingtree
+        fabric:legendary-monuments
+        fabric:terrablender:beta
+        fabric:chipped
+        fabric:cobblemon-alpha-project
+        fabric:cobblemon-cobblestats
+        fabric:c2me-fabric:alpha
+
+      ENABLE_RCON: "true"
+      RCON_PASSWORD: "change-this-rcon-password"
+
+      # Pregeneracion automatica al iniciar (pasos 2, 3 y 4)
+      RCON_CMDS_STARTUP: |-
+        chunky start minecraft:overworld circle 0 0 5000
+        chunky start minecraft:the_nether circle 0 0 2500
+        chunky start minecraft:the_end circle 0 0 2000
+        chunky quiet 15
+        chunky progress
+
+      # Pausar pregeneracion al entrar jugadores y reanudar cuando se vacia
+      RCON_CMDS_FIRST_CONNECT: |-
+        chunky pause
+
+      RCON_CMDS_LAST_DISCONNECT: |-
+        chunky continue
+
+    volumes:
+      - ./data:/data
+      - ./config:/config:ro
+
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c '</dev/tcp/127.0.0.1/25565'"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 2m
+
+  mc-backup:
+    image: itzg/mc-backup:latest
+    container_name: mc-evolution-backup
+    restart: unless-stopped
+    depends_on:
+      - mc-evolution
+    environment:
+      RCON_HOST: "mc-evolution"
+      RCON_PORT: "25575"
+      RCON_PASSWORD: "change-this-rcon-password"
+      INITIAL_DELAY: "2m"
+      BACKUP_INTERVAL: "24h"
+      PRUNE_BACKUPS_DAYS: "7"
+      PAUSE_IF_NO_PLAYERS: "true"
+    volumes:
+      - ./data:/data:ro
+      - ./backups:/backups
