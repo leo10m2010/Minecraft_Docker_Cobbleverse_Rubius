@@ -50,7 +50,7 @@ services:
         fabric:c2me-fabric:alpha
 
       ENABLE_RCON: "true"
-      RCON_PASSWORD: "change-this-rcon-password"
+      RCON_PASSWORD: "${RCON_PASSWORD:?Set RCON_PASSWORD in .env}"
 
       # Pregeneracion automatica al iniciar (pasos 2, 3 y 4)
       RCON_CMDS_STARTUP: |-
@@ -79,7 +79,7 @@ services:
       start_period: 2m
 
   mc-backup:
-    image: itzg/mc-backup:latest
+    image: "${MC_BACKUP_IMAGE:-itzg/mc-backup:2026.2.0@sha256:ba5cf40c25973aad937bece38747e05ef99215a15a5aecf55a4ed9e8aa5e2668}"
     container_name: mc-evolution-backup
     restart: unless-stopped
     depends_on:
@@ -87,7 +87,7 @@ services:
     environment:
       RCON_HOST: "mc-evolution"
       RCON_PORT: "25575"
-      RCON_PASSWORD: "change-this-rcon-password"
+      RCON_PASSWORD: "${RCON_PASSWORD:?Set RCON_PASSWORD in .env}"
       INITIAL_DELAY: "2m"
       BACKUP_INTERVAL: "24h"
       PRUNE_BACKUPS_DAYS: "7"

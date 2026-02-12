@@ -8,3 +8,5 @@ data/datapacks/extra/*
 
 backups/*
 !backups/.gitkeep
+
+.env

@@ -16,7 +16,12 @@ La idea de este repo es simple: clonar, levantar con un comando y jugar.
 ## Inicio rapido
 
 1. Clona el repo.
-2. Edita `docker-compose.yml` y cambia `RCON_PASSWORD`.
+2. Crea tu `.env` desde el ejemplo y define `RCON_PASSWORD`.
+
+```bash
+cp .env.example .env
+```
+
 3. Levanta el servidor:
 
 ```bash
@@ -53,6 +58,7 @@ Ademas:
 - `data/datapacks/`: datapacks incluidos en el repo.
 - `scripts/update-safe.sh`: actualizacion segura con backup previo.
 - `scripts/rollback-last-update.sh`: rollback rapido al ultimo backup.
+- `.env.example`: variables de entorno recomendadas para secretos e imagenes.
 
 ## Actualizar sin miedo
 
@@ -65,6 +71,18 @@ Si algo sale mal:
 ```bash
 ./scripts/rollback-last-update.sh
 ```
+
+Opcional: pasar un backup especifico
+
+```bash
+./scripts/rollback-last-update.sh 20260212-142530
+```
+
+## Variables recomendadas
+
+- `RCON_PASSWORD`: secreto compartido entre servidor y backup.
+- `MC_BACKUP_IMAGE`: imagen de `mc-backup` (viene pineada por defecto en `.env.example`).
+- `PRE_UPDATE_RETENTION_DAYS`: dias a conservar en `backups/pre-update` antes de purgar.
 
 ## Notas
 
