@@ -19,7 +19,7 @@ services:
 
       INIT_MEMORY: "6G"
       MAX_MEMORY: "12G"
-      TZ: "America/Mexico_City"
+      TZ: "${SERVER_TZ:-America/Lima}"
 
       USE_MEOWICE_FLAGS: "true"
 
@@ -95,3 +95,33 @@ services:
     volumes:
       - ./data:/data:ro
       - ./backups:/backups
+
+  update-checker:
+    image: python:3.12-alpine
+    container_name: mc-evolution-update-checker
+    restart: unless-stopped
+    depends_on:
+      - mc-evolution
+    working_dir: /workspace
+    command: ["python", "/scripts/update-checker.py", "loop"]
+    environment:
+      UPDATE_CHECK_ENABLED: "${UPDATE_CHECK_ENABLED:-true}"
+      UPDATE_CHECK_ON_START: "${UPDATE_CHECK_ON_START:-true}"
+      UPDATE_CHECK_INTERVAL_HOURS: "${UPDATE_CHECK_INTERVAL_HOURS:-168}"
+      UPDATE_NOTIFY_LOG: "${UPDATE_NOTIFY_LOG:-true}"
+      UPDATE_NOTIFY_DISCORD: "${UPDATE_NOTIFY_DISCORD:-false}"
+      UPDATE_NOTIFY_DISCORD_WEBHOOK: "${UPDATE_NOTIFY_DISCORD_WEBHOOK:-}"
+      UPDATE_NOTIFY_MINECRAFT: "${UPDATE_NOTIFY_MINECRAFT:-false}"
+      UPDATE_NOTIFY_MINECRAFT_REPEAT_HOURS: "${UPDATE_NOTIFY_MINECRAFT_REPEAT_HOURS:-24}"
+      LOCAL_MANIFEST_PATH: "/data/.modrinth-modpack-manifest.json"
+      UPDATE_CHECK_STATE_FILE: "/state/state.json"
+      MODRINTH_PROJECT_SLUG: "${MODRINTH_PROJECT_SLUG:-cobbleverse}"
+      MODRINTH_LOADER: "${MODRINTH_LOADER:-fabric}"
+      MODRINTH_GAME_VERSION: "${MODRINTH_GAME_VERSION:-1.21.1}"
+      RCON_HOST: "mc-evolution"
+      RCON_PORT: "25575"
+      RCON_PASSWORD: "${RCON_PASSWORD:-}"
+    volumes:
+      - ./scripts:/scripts:ro
+      - ./data:/data:ro
+      - ./backups/update-check:/state
